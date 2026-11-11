@@ -1,0 +1,34 @@
+# Logs y caché
+*.log
+.DS_Store
+.phpunit.result.cache
+/.phpunit.cache
+
+# Variables de entorno y llaves
+.env
+.env.backup
+.env.production
+/storage/*.key
+/auth.json
+
+# Dependencias de PHP y Node
+/vendor
+/node_modules
+
+# Compilados y archivos públicos generados
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+
+# IDEs y Editores
+/.codex
+/.cursor/
+/.idea
+/.nova
+/.vscode
+/.zed
+_ide_helper.php
+Homestead.json
+Homestead.yaml
+Thumbs.db
