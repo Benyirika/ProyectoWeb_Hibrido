@@ -1,14 +1,27 @@
 <?php
-
+use App\Models\User;
+use App\Models\Pedido;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/videojuegos', function () {
-    return response()->json([
-        'data' => [
-            ['id' => 1, 'nombre' => 'The Legend of Zelda: Tears of the Kingdom', 'plataforma' => 'Nintendo Switch', 'precio' => 59.99],
-            ['id' => 2, 'nombre' => 'God of War Ragnarök', 'plataforma' => 'PlayStation 5', 'precio' => 69.99],
-            ['id' => 3, 'nombre' => 'Elden Ring', 'plataforma' => 'PC / Consolas', 'precio' => 49.99],
-            ['id' => 4, 'nombre' => 'Cyberpunk 2077', 'plataforma' => 'PC', 'precio' => 39.99]
-        ]
-    ]);
+// Login SIN límite de intentos (vulnerable)
+Route::post('/login', function (Request $request) {
+    $user = User::where('email', $request->email)->first();
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Credenciales inválidas'], 401);
+    }
+    return ['token' => $user->createToken('app')->plainTextToken];
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Correcta: solo los pedidos del usuario autenticado
+    Route::get('/pedidos', fn (Request $r) => $r->user()->pedidos);
+
+    // VULNERABLE: no verifica quién es el dueño (IDOR)
+    Route::get('/pedidos/{id}', fn ($id) => Pedido::findOrFail($id));
+
+    // VULNERABLE: guarda sin validar los datos
+    Route::post('/pedidos', fn (Request $r) =>
+        $r->user()->pedidos()->create($r->only('descripcion', 'total')));
 });
