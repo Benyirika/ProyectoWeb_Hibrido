@@ -23,6 +23,7 @@ return [
         'http://localhost:5173',
         'http://localhost:4173',
         'http://localhost',
+        'capacitor://localhost',
     ],
 
     'allowed_origins_patterns' => [],
